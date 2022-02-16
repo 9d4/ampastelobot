@@ -6,10 +6,13 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
+	"github.com/traperwaze/ampastelobot/database"
+	"github.com/traperwaze/ampastelobot/matchers"
 )
 
 func init() {
 	godotenv.Load()
+	database.Init()
 }
 
 func main() {
@@ -22,7 +25,6 @@ func main() {
 	bot.Debug = true
 
 	updateConfig := tgbotapi.NewUpdate(0)
-
 	updateConfig.Timeout = 30
 
 	updates := bot.GetUpdatesChan(updateConfig)
@@ -31,24 +33,10 @@ func main() {
 		for {
 			update := <-updates
 
-			go func() { handleUpdate(bot, update) }()
+			go func() { matchers.Match(bot, update) }()
 		}
 	}()
 
 	log.Println("Bot ready!")
 	select {}
-}
-
-func handleUpdate(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
-	if update.Message == nil {
-		return
-	}
-
-	// handle command
-	switch update.Message.Command() {
-	case "start":
-
-	default:
-		bot.Send(handleNotFound(update))
-	}
 }
