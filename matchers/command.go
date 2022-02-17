@@ -11,7 +11,10 @@ import (
 func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	switch update.Message.Command() {
 	case "start":
-		log.Println("[session]", session.CreateSession(update).SessionID)
+		if _, err :=session.CreateSession(update); err == nil {
+			log.Println("[command] succesfully creating session")
+		}
+
 		// bot.Send(handleStart(update))
 	case "menu":
 		cmd.Menu(bot, update)

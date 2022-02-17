@@ -2,10 +2,12 @@ package session
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/traperwaze/ampastelobot/database"
 )
 
 type SessionData struct {
@@ -51,9 +53,19 @@ func GenerateSessionID(userID int64) []byte {
 	return sum
 }
 
-func CreateSession(update tgbotapi.Update) Session {
+func CreateSession(update tgbotapi.Update) (Session, error) {
 	sess := NewSession(update.Message.From.ID)
 	sess.Data.MenuState = ""
 
-	return sess
+	stmt, err := database.DB.Prepare("INSERT INTO session (user_id, session_id, data) VALUES (?,?,?)")
+	if err != nil {
+		return sess, errors.New("[session] unable to make query")
+	}
+
+	if _, err := stmt.Exec(sess.UserID, sess.SessionID, ""); // tmp the data empty
+	err != nil {
+		return sess, errors.New("[session] unable to exec query")
+	}
+
+	return sess, nil
 }
