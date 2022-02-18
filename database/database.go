@@ -38,14 +38,6 @@ func Init() {
 	log.Println("[database] Init Done")
 }
 
-func dbFileExists(path string) bool {
-	if _, err := os.Stat(path); err == nil {
-		return true
-	}
-
-	return false
-}
-
 func CreateSessionTable() bool {
 	// make session table
 	sql := `CREATE TABLE IF NOT EXISTS session (
@@ -53,8 +45,8 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,
 user_id INTEGER NOT NULL,
 session_id TEXT NOT NULL,
 data TEXT,
-created_at DATETIME NOT NULL,
-updated_at DATETIME NOT NULL
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );`
 
 	stmt, err := DB.Prepare(sql)
@@ -63,6 +55,14 @@ updated_at DATETIME NOT NULL
 	}
 
 	if _, err := stmt.Exec(); err == nil {
+		return true
+	}
+
+	return false
+}
+
+func dbFileExists(path string) bool {
+	if _, err := os.Stat(path); err == nil {
 		return true
 	}
 
