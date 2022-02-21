@@ -2,6 +2,8 @@ package common
 
 import (
 	"os"
+	"strings"
+	"unicode"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -19,4 +21,38 @@ func Wd() string {
 func SendMessageText(bot *tgbotapi.BotAPI, chatID int64, msg string) {
 	mc := tgbotapi.NewMessage(chatID, msg)
 	bot.Send(mc)
+}
+
+// returning the command and it's args
+// e.g. /script ampas tebu
+// returns "script" ["ampas", "tebu"]
+// 			string	[]string
+// func ParseCommand(cmd string) (string []string) {
+
+// }
+
+func StripSpaces(text string) string {
+	trimmed := []byte(strings.TrimSpace(text))
+	out := []byte{}
+
+	// then trim duplicate space in the center of the text
+	gotSpace := false
+	for _, l := range trimmed {
+		if !unicode.IsSpace(rune(l)) {
+			out = append(out, l)
+
+			gotSpace = false
+		}
+
+		if unicode.IsSpace(rune(l)) {
+			// if previously got space, don't include the next space
+			if !gotSpace {
+				out = append(out, l)
+			}
+			
+			gotSpace = true
+		}
+	}
+
+	return string(out)
 }
