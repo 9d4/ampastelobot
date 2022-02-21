@@ -9,9 +9,7 @@ func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	switch update.Message.Command() {
 	case "start":
 		cmd.Start(bot, update)
-	case "menu":
-		cmd.Menu(bot, update)
-	default:
-		// bot.Send(handleUnknownCommand(update))
+	case "script":
+		cmd.Script(bot, update)
 	}
 }
