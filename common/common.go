@@ -27,9 +27,20 @@ func SendMessageText(bot *tgbotapi.BotAPI, chatID int64, msg string) {
 // e.g. /script ampas tebu
 // returns "script" ["ampas", "tebu"]
 // 			string	[]string
-// func ParseCommand(cmd string) (string []string) {
+func ParseCommand(cmd string) (command string, args []string) {
+	stripped := StripSpaces(cmd)
 
-// }
+	// split string by space
+	s := strings.Split(stripped, " ")
+	command = string([]byte(s[0])[1:]) // remove the slash
+
+	if len(s) > 1 {
+		args = s[1:]
+		return
+	}
+
+	return command, []string{}
+}
 
 func StripSpaces(text string) string {
 	trimmed := []byte(strings.TrimSpace(text))
@@ -49,7 +60,7 @@ func StripSpaces(text string) string {
 			if !gotSpace {
 				out = append(out, l)
 			}
-			
+
 			gotSpace = true
 		}
 	}
