@@ -31,29 +31,25 @@ func TestStripBackspaces(t *testing.T) {
 func TestParseCommand(t *testing.T) {
 	t.Parallel()
 
-	type ret struct {
-		cmd  string
-		args []string
-	}
-
 	type test struct {
-		want  ret
+		want  Command
 		input string
 	}
 
 	for _, item := range []test{
-		{want: ret{cmd: "start", args: []string{"ampas", "ampas", "-o", "asdl"}}, input: "/start ampas ampas -o asdl"},
-		{want: ret{cmd: "start", args: []string{"save", "-0", "things"}}, input: "/start save -0 things"},
-		{want: ret{cmd: "start", args: []string{"kuda", "antariksa"}}, input: "/start kuda   antariksa   "},
-		{want: ret{cmd: "start", args: []string{"uyeeeeee", "okokok"}}, input: "   /start uyeeeeee   okokok"},
+		{want: Command{Command: "start", Subcommand: "ampas", Args: []string{"ampas", "-o", "asdl"}}, input: "/start ampas         ampas -o asdl"},
 	} {
-		cmd, args := ParseCommand(item.input)
+		cmd := ParseCommand(item.input)
 
-		if !(cmd == item.want.cmd && reflect.DeepEqual(args, item.want.args)) {
-			tmp := ret{cmd: cmd, args: args}
-
-			t.Errorf("want: '%v', got:'%v'", item.want, tmp)
+		if !reflect.DeepEqual(cmd, item.want) {
+			t.Errorf("want: '%v', got:'%v'", item.want, cmd)
 		}
+
+		// if !(cmd == item.want. && reflect.DeepEqual(args, item.want.args)) {
+		// 	tmp := ret{cmd: cmd, args: args}
+
+		// 	t.Errorf("want: '%v', got:'%v'", item.want, tmp)
+		// }
 	}
 
 }

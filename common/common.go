@@ -8,6 +8,12 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+type Command struct {
+	Command    string
+	Subcommand string
+	Args       []string
+}
+
 func Wd() string {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -27,19 +33,27 @@ func SendMessageText(bot *tgbotapi.BotAPI, chatID int64, msg string) {
 // e.g. /script ampas tebu
 // returns "script" ["ampas", "tebu"]
 // 			string	[]string
-func ParseCommand(cmd string) (command string, args []string) {
+func ParseCommand(cmd string) (command Command) {
 	stripped := StripSpaces(cmd)
 
 	// split string by space
-	s := strings.Split(stripped, " ")
-	command = string([]byte(s[0])[1:]) // remove the slash
+	slice := strings.Split(stripped, " ")
 
-	if len(s) > 1 {
-		args = s[1:]
-		return
+	// assign the command (slice[0]) to command.Command
+	// but remove the slash
+	command.Command = string([]byte(slice[0])[1:])
+
+	if len(slice) >= 2 {
+		// sub command is index 1 of slice
+		command.Subcommand = slice[1]
 	}
 
-	return command, []string{}
+	if len(slice) >= 3 {
+		// args starts from index 2 of slice
+		command.Args = slice[2:]
+	}
+
+	return
 }
 
 func StripSpaces(text string) string {
