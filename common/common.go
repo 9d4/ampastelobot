@@ -29,6 +29,13 @@ func SendMessageText(bot *tgbotapi.BotAPI, chatID int64, msg string) {
 	bot.Send(mc)
 }
 
+// wrapper to send html parsed text message to user easily
+func SendMessageHtml(bot *tgbotapi.BotAPI, chatID int64, msg string) {
+	mc := tgbotapi.NewMessage(chatID, msg)
+	mc.ParseMode = "HTML"
+	bot.Send(mc)
+}
+
 // returning the command and it's args
 // e.g. /script ampas tebu
 // returns "script" ["ampas", "tebu"]

@@ -11,5 +11,7 @@ func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		cmd.Start(bot, update)
 	case "script":
 		cmd.Script(bot, update)
+	case "req", "request":
+		cmd.HttpRequest(bot, update)
 	}
 }
