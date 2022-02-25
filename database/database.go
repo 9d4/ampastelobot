@@ -21,9 +21,13 @@ func Init() {
 	if !dbFileExists(dsn) {
 		log.Println("[database] DB File not found, will created automatically")
 
-		// create table after init finish
-		defer CreateSessionTable()
 	}
+
+	// create tables after init finish
+	defer func() {
+		CreateSessionTable()
+		CreateBlynkTokenTable()
+	}()
 
 	db, err := sql.Open("sqlite3", dsn)
 	if err != nil {
@@ -52,6 +56,27 @@ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 	stmt, err := DB.Prepare(sql)
 	if err != nil {
 		log.Println("Can't create sesison table")
+	}
+
+	if _, err := stmt.Exec(); err == nil {
+		return true
+	}
+
+	return false
+}
+
+func CreateBlynkTokenTable() bool {
+	sql := `CREATE TABLE IF NOT EXISTS blynk_tokens (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+user_id INTEGER NOT NULL,
+token TEXT,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);`
+
+	stmt, err := DB.Prepare(sql)
+	if err != nil {
+		log.Panicln("Can't create blynk_tokens table")
 	}
 
 	if _, err := stmt.Exec(); err == nil {
