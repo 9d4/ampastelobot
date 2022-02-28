@@ -1,20 +1,17 @@
 package matchers
 
 import (
-	"fmt"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/traperwaze/ampastelobot/action"
 )
 
 func Match(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
-	test := func(up *action.BotUpdate) bool {
-		fmt.Println("SUCCESS")
-		return true
-	}
+	actuator := action.NewActuator(bot, update)
 
+	actuator.Add(CallbackQueryAction)
+	actuator.Add(CommandAction)
 
-	action.NewActuator(bot, update).Add(test, CallbackQueryAction).Exec()
+	actuator.Exec()
 
 	// atr.Print()
 
