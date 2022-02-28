@@ -1,8 +1,6 @@
 package action
 
 import (
-	"fmt"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -19,9 +17,9 @@ type ActionFunc func(*BotUpdate) bool
 func NewActuator(botAPI *tgbotapi.BotAPI, update tgbotapi.Update) *Actuator {
 	return &Actuator{
 		botUpdate: &BotUpdate{
-			Bot: botAPI,
+			Bot:    botAPI,
 			Update: &update,
-			Data: map[string]interface{}{},
+			Data:   map[string]interface{}{},
 		},
 	}
 }
@@ -29,11 +27,6 @@ func NewActuator(botAPI *tgbotapi.BotAPI, update tgbotapi.Update) *Actuator {
 type Actuator struct {
 	botUpdate *BotUpdate
 	actions   []ActionFunc
-}
-
-func (atr *Actuator) Print() {
-	fmt.Println(atr.botUpdate)
-	fmt.Println(atr.actions)
 }
 
 func (atr *Actuator) Add(fn ...ActionFunc) *Actuator {
