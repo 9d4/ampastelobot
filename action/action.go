@@ -21,6 +21,7 @@ func NewActuator(botAPI *tgbotapi.BotAPI, update tgbotapi.Update) *Actuator {
 		botUpdate: &BotUpdate{
 			Bot: botAPI,
 			Update: &update,
+			Data: map[string]interface{}{},
 		},
 	}
 }
