@@ -10,24 +10,7 @@ func Match(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 
 	actuator.Add(CallbackQueryAction)
 	actuator.Add(CommandAction)
+	actuator.Add(TextAction)
 
 	actuator.Exec()
-
-	// atr.Print()
-
-	// if update.CallbackQuery != nil {
-	// 	CallbackQuery(bot, update)
-	// 	return
-	// }
-
-	// if update.Message == nil {
-	// 	return
-	// }
-
-	// if update.Message.IsCommand() {
-	// 	Command(bot, update)
-	// 	return
-	// }
-
-	// Text(bot, update)
 }
