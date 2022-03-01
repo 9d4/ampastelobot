@@ -4,9 +4,11 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/traperwaze/ampastelobot/action"
 	"github.com/traperwaze/ampastelobot/database"
 )
 
@@ -60,8 +62,6 @@ func GenerateSessionID(userID int64) []byte {
 	h.Write([]byte(s))
 	sum := h.Sum(nil)
 
-	fmt.Println(sum)
-
 	return sum
 }
 
@@ -112,4 +112,26 @@ func GetSession(update tgbotapi.Update) (Session, error) {
 	}
 
 	return sess, nil
+}
+
+// Session Middleware checks wheter user has session in DB or not,
+// if it does, then continue, else create one.
+func Middleware(botUpdate *action.BotUpdate) bool {
+	_, update := botUpdate.Bot, *botUpdate.Update
+
+	// check wheter has session or not
+	if _, err := GetSession(update); err != nil {
+		switch err {
+		case err.(*ErrNoSessionInDB):
+			// if error is ErrNoSessionInDB
+			// then create session
+			CreateSession(update)
+			botUpdate.Data["first_time"] = true
+		default:
+			log.Println(err)
+			return false
+		}
+	}
+
+	return true
 }

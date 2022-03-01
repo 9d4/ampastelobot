@@ -1,15 +1,16 @@
 package matchers
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/traperwaze/ampastelobot/action"
 	cmd "github.com/traperwaze/ampastelobot/commands"
 )
 
-func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
+func Command(botUpdate *action.BotUpdate) {
+	bot, update := botUpdate.Bot, *botUpdate.Update
+
 	switch update.Message.Command() {
 	case "start":
-		cmd.Start(bot, update)
+		cmd.Start(botUpdate)
 	case "script":
 		cmd.Script(bot, update)
 	case "req", "request":
@@ -18,10 +19,10 @@ func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 }
 
 func CommandAction(botUpdate *action.BotUpdate) bool {
-	bot, update := botUpdate.Bot, *botUpdate.Update
+	_, update := botUpdate.Bot, *botUpdate.Update
 
 	if update.Message.IsCommand() {
-		Command(bot, update)
+		Command(botUpdate)
 
 		return false
 	}
