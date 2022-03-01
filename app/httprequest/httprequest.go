@@ -36,10 +36,10 @@ func (r *HttpRequest) checkMethod() error {
 
 func (r *HttpRequest) checkUrl() error {
 	url, err := url.Parse(r.Url)
-	if err == nil {
+	if err != nil {
 		return err
 	}
-
+	
 	if url.Scheme == "" {
 		url.Scheme = "http"
 	}
@@ -57,7 +57,7 @@ func (r *HttpRequest) do() (*http.Response, error) {
 	}
 
 	if err := r.checkUrl(); err != nil {
-		return response, err
+			return response, err
 	}
 
 	req, _ := http.NewRequest(r.Method, r.Url, nil)
