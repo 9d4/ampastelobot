@@ -2,7 +2,6 @@ package httprequest
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -35,6 +34,20 @@ func (r *HttpRequest) checkMethod() error {
 	return errors.New("invalid method")
 }
 
+func (r *HttpRequest) checkUrl() error {
+	url, err := url.Parse(r.Url)
+	if err == nil {
+		return err
+	}
+
+	if url.Scheme == "" {
+		url.Scheme = "http"
+	}
+	r.Url = url.String()
+
+	return nil
+}
+
 func (r *HttpRequest) do() (*http.Response, error) {
 	var client *http.Client = &http.Client{}
 	var response *http.Response
@@ -43,15 +56,8 @@ func (r *HttpRequest) do() (*http.Response, error) {
 		return response, err
 	}
 
-	// parse url
-	if url, err := url.Parse(r.Url); err == nil {
-		if url.Scheme == "" {
-			url.Scheme = "http"
-		}
-		
-		r.Url = url.String()
-		fmt.Println("=======================================")
-		fmt.Println(r.Url)
+	if err := r.checkUrl(); err != nil {
+		return response, err
 	}
 
 	req, _ := http.NewRequest(r.Method, r.Url, nil)
