@@ -1,3 +1,5 @@
+// +heroku goVersion 1.17
+
 module github.com/traperwaze/ampastelobot
 
 go 1.17
