@@ -2,8 +2,10 @@ package httprequest
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 var AcceptedMethod []string = []string{
@@ -39,6 +41,17 @@ func (r *HttpRequest) do() (*http.Response, error) {
 
 	if err := r.checkMethod(); err != nil {
 		return response, err
+	}
+
+	// parse url
+	if url, err := url.Parse(r.Url); err == nil {
+		if url.Scheme == "" {
+			url.Scheme = "http"
+		}
+		
+		r.Url = url.String()
+		fmt.Println("=======================================")
+		fmt.Println(r.Url)
 	}
 
 	req, _ := http.NewRequest(r.Method, r.Url, nil)
