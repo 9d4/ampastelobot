@@ -53,6 +53,8 @@ func HttpRequest(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	}
 }
 
+// send help message to user about:
+// /req, /request
 func HttpRequestSendHelp(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	help := tgbotapi.NewMessage(update.Message.Chat.ID, HttpRequestHelpRst)
 	help.ParseMode = "HTML"
