@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -52,4 +53,10 @@ func TestParseCommand(t *testing.T) {
 		// }
 	}
 
+}
+
+func TestCmdHasArg(t *testing.T) {
+	cmd := ParseCommand("/ampas mm -m asdad")
+
+	fmt.Println("jajan", cmd.getArg("asdad"), cmd.GetArgValue("-m"))
 }

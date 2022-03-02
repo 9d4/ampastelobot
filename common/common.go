@@ -14,6 +14,36 @@ type Command struct {
 	Args       []string
 }
 
+func (cmd *Command) getArg(arg string) int {
+	for i, a := range cmd.Args {
+		if a == arg {
+			return i
+		}
+	}
+
+	return -1
+}
+
+// get the value of given arg string from command.
+// e.g. -m GET
+// GetArgValue("-m") will return GET.
+// if arg or value not found return empty string
+func (cmd *Command) GetArgValue(arg string) (ret string) {
+	i := cmd.getArg(arg)
+	if i == -1 {
+		return
+	}
+
+	// value should be in [i+1]
+	if len(cmd.Args)-1 <= i {
+		return
+	}
+
+	ret = cmd.Args[i+1]	
+
+	return
+}
+
 func Wd() string {
 	dir, err := os.Getwd()
 	if err != nil {

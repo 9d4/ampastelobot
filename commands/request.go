@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/traperwaze/ampastelobot/app/httprequest"
@@ -39,10 +40,12 @@ func HttpRequest(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		return
 	}
 
+	hr := httprequest.NewSimpleRequest(cmd.Subcommand)
+
 	// if there's no args supplied then
-	// do simple request
+	// do basic simple request where it uses HEAD method
 	if len(cmd.Args) == 0 {
-		body, err := httprequest.NewSimpleRequest(cmd.Subcommand).DoSimple()
+		body, err := hr.DoSimple()
 		if err != nil {
 			common.SendMessageText(bot, update.Message.Chat.ID, "Couldn't make request")
 			HttpRequestSendHelp(bot, update)
@@ -50,6 +53,20 @@ func HttpRequest(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		}
 
 		common.SendMessageText(bot, update.Message.Chat.ID, fmt.Sprint(body))
+		return
+	}
+
+	if method := cmd.GetArgValue("-m"); method != "" {
+		hr.Method = strings.ToUpper(method)
+
+		statusCode, err := hr.DoSimple()
+		if err != nil {
+			common.SendMessageText(bot, update.Message.Chat.ID, "Couldn't make request")
+			HttpRequestSendHelp(bot, update)
+			return
+		}
+
+		common.SendMessageText(bot, update.Message.Chat.ID, fmt.Sprint(statusCode))
 		return
 	}
 }
