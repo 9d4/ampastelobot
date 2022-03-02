@@ -39,8 +39,9 @@ func HttpRequest(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		return
 	}
 
+	// if there's no args supplied then
+	// do simple request
 	if len(cmd.Args) == 0 {
-		// do simple request
 		body, err := httprequest.NewSimpleRequest(cmd.Subcommand).DoSimple()
 		if err != nil {
 			common.SendMessageText(bot, update.Message.Chat.ID, "Couldn't make request")

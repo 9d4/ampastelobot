@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 var AcceptedMethod []string = []string{
@@ -24,6 +25,7 @@ type HttpRequest struct {
 	Method string
 }
 
+// check wheter method exists in AcceptedMethod or not
 func (r *HttpRequest) checkMethod() error {
 	for _, m := range AcceptedMethod {
 		if m == r.Method {
@@ -48,6 +50,9 @@ func (r *HttpRequest) checkUrl() error {
 	return nil
 }
 
+// do the http request based on the
+// *HttpRequest.Url
+// *HttpRequest.Method
 func (r *HttpRequest) do() (*http.Response, error) {
 	var client *http.Client = &http.Client{}
 	var response *http.Response
@@ -71,6 +76,7 @@ func (r *HttpRequest) do() (*http.Response, error) {
 }
 
 // do the request
+// returns the response body as string or error
 func (r *HttpRequest) Do() (string, error) {
 	res, err := r.do()
 	if err != nil {
@@ -86,6 +92,8 @@ func (r *HttpRequest) Do() (string, error) {
 	return string(body), nil
 }
 
+// do simple request
+// only returns the status code or error
 func (r *HttpRequest) DoSimple() (int, error) {
 	res, err := r.do()
 	if err != nil {
@@ -95,9 +103,22 @@ func (r *HttpRequest) DoSimple() (int, error) {
 	return res.StatusCode, nil
 }
 
+// Simple Request:
+// make request with method HEAD
 func NewSimpleRequest(url string) *HttpRequest {
 	return &HttpRequest{
 		Url:    url,
 		Method: http.MethodHead,
+	}
+}
+
+// create a new HttpRequest with custom method
+func NewRequest(url string, method string) *HttpRequest {
+	// capitalize method
+	method = strings.ToUpper(method)
+
+	return &HttpRequest{
+		Url:    url,
+		Method: method,
 	}
 }
