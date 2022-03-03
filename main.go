@@ -3,11 +3,12 @@ package main
 import (
 	"log"
 	"os"
+	"sync"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/joho/godotenv"
 	"github.com/9d4/ampastelobot/database"
 	"github.com/9d4/ampastelobot/matchers"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 )
 
 func init() {
@@ -16,6 +17,8 @@ func init() {
 }
 
 func main() {
+	var wg sync.WaitGroup
+
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 	if err != nil {
 		log.Fatal(err)
@@ -29,7 +32,10 @@ func main() {
 
 	updates := bot.GetUpdatesChan(updateConfig)
 
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
+
 		for {
 			update := <-updates
 
@@ -38,5 +44,5 @@ func main() {
 	}()
 
 	log.Println("Bot ready!")
-	select {}
+	wg.Wait()
 }
