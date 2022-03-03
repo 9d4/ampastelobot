@@ -24,6 +24,11 @@ func (cmd *Command) getArg(arg string) int {
 	return -1
 }
 
+// returning true if arg exists in Command
+func (cmd *Command) HasArg(arg string) bool {
+	return cmd.getArg(arg) != -1
+}
+
 // get the value of given arg string from command.
 // e.g. -m GET
 // GetArgValue("-m") will return GET.
