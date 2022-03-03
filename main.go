@@ -6,8 +6,8 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
-	"github.com/traperwaze/ampastelobot/database"
-	"github.com/traperwaze/ampastelobot/matchers"
+	"github.com/9d4/ampastelobot/database"
+	"github.com/9d4/ampastelobot/matchers"
 )
 
 func init() {

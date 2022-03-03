@@ -1,8 +1,8 @@
 package matchers
 
 import (
-	"github.com/traperwaze/ampastelobot/action"
-	cmd "github.com/traperwaze/ampastelobot/commands"
+	"github.com/9d4/ampastelobot/action"
+	cmd "github.com/9d4/ampastelobot/commands"
 )
 
 func Command(botUpdate *action.BotUpdate) {

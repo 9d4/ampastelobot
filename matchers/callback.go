@@ -2,7 +2,7 @@ package matchers
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/traperwaze/ampastelobot/action"
+	"github.com/9d4/ampastelobot/action"
 )
 
 func CallbackQuery(bot *tgbotapi.BotAPI, update tgbotapi.Update) {

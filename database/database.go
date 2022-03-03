@@ -6,7 +6,7 @@ import (
 	"path"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/traperwaze/ampastelobot/common"
+	"github.com/9d4/ampastelobot/common"
 
 	"database/sql"
 )

@@ -3,8 +3,8 @@ package commands
 import (
 	"reflect"
 
-	"github.com/traperwaze/ampastelobot/action"
-	"github.com/traperwaze/ampastelobot/common"
+	"github.com/9d4/ampastelobot/action"
+	"github.com/9d4/ampastelobot/common"
 )
 
 func Start(botUpdate *action.BotUpdate) {

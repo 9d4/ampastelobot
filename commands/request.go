@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/traperwaze/ampastelobot/app/httprequest"
-	"github.com/traperwaze/ampastelobot/common"
+	"github.com/9d4/ampastelobot/app/httprequest"
+	"github.com/9d4/ampastelobot/common"
 )
 
 // use ParseMode = "HTML"
