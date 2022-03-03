@@ -2,11 +2,10 @@ package commands
 
 import (
 	"fmt"
-	"strings"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/9d4/ampastelobot/app/httprequest"
 	"github.com/9d4/ampastelobot/common"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 // use ParseMode = "HTML"
@@ -31,44 +30,39 @@ func HttpRequest(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	//     cmd		url
 	// cmd. Cmd		Subcommand
 
-	fallback := func() {
-		HttpRequestSendHelp(bot, update)
-	}
-
 	if cmd.Subcommand == "" {
-		fallback()
+		HttpRequestSendHelp(bot, update)
 		return
 	}
 
 	hr := httprequest.NewSimpleRequest(cmd.Subcommand)
+	method := cmd.GetArgValue("-m")
 
-	// if there's no args supplied then
-	// do basic simple request where it uses HEAD method
-	if len(cmd.Args) == 0 {
-		body, err := hr.DoSimple()
-		if err != nil {
-			common.SendMessageText(bot, update.Message.Chat.ID, "Couldn't make request")
-			HttpRequestSendHelp(bot, update)
-			return
-		}
+	var (
+		body   string
+		reqErr error
+	)
 
-		common.SendMessageText(bot, update.Message.Chat.ID, fmt.Sprint(body))
-		return
-	}
-
-	if method := cmd.GetArgValue("-m"); method != "" {
-		hr.Method = strings.ToUpper(method)
-
+	switch method {
+	case "":
+		hr.Method = "HEAD"
 		statusCode, err := hr.DoSimple()
-		if err != nil {
-			common.SendMessageText(bot, update.Message.Chat.ID, "Couldn't make request")
-			HttpRequestSendHelp(bot, update)
-			return
-		}
+		// we need to do this due to type incompatibility
+		reqErr = err
+		body = fmt.Sprint(statusCode)
 
-		common.SendMessageText(bot, update.Message.Chat.ID, fmt.Sprint(statusCode))
+	default:
+		hr.Method = method
+		body, reqErr = hr.Do()
+	}
+
+	if reqErr != nil {
+		common.SendMessageText(bot, update.Message.Chat.ID, "Couldn't make request")
+		common.SendMessageText(bot, update.Message.Chat.ID, reqErr.Error())
 		return
 	}
+
+	common.SendMessageText(bot, update.Message.Chat.ID, body)
 }
 
 // send help message to user about:
