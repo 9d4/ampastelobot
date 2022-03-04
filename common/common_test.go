@@ -45,12 +45,6 @@ func TestParseCommand(t *testing.T) {
 		if !reflect.DeepEqual(cmd, item.want) {
 			t.Errorf("want: '%v', got:'%v'", item.want, cmd)
 		}
-
-		// if !(cmd == item.want. && reflect.DeepEqual(args, item.want.args)) {
-		// 	tmp := ret{cmd: cmd, args: args}
-
-		// 	t.Errorf("want: '%v', got:'%v'", item.want, tmp)
-		// }
 	}
 
 }
