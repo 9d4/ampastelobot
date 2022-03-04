@@ -7,9 +7,9 @@ import (
 	"log"
 	"time"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/9d4/ampastelobot/action"
 	"github.com/9d4/ampastelobot/database"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type SessionData struct {
@@ -96,7 +96,10 @@ func GetSession(update tgbotapi.Update) (Session, error) {
 	defer rows.Close()
 
 	// take the first record
-	columns, _ := rows.Columns()
+	columns, err := rows.Columns()
+	if err != nil {
+		return sess, err
+	}
 	length := len(columns)
 
 	// save unused data from scan
