@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/9d4/ampastelobot/app/httprequest"
 	"github.com/9d4/ampastelobot/common"
@@ -39,21 +40,18 @@ func HttpRequest(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	method := cmd.GetArgValue("-m")
 
 	var (
-		body   string
-		reqErr error
+		statusCode int
+		reqErr     error
 	)
 
 	switch method {
 	case "":
 		hr.Method = "HEAD"
-		statusCode, err := hr.DoSimple()
-		// we need to do this due to type incompatibility
-		reqErr = err
-		body = fmt.Sprint(statusCode)
+		statusCode, reqErr = hr.DoSimple()
 
 	default:
-		hr.Method = method
-		body, reqErr = hr.Do()
+		hr.Method = strings.ToUpper(method)
+		statusCode, reqErr = hr.DoSimple()
 	}
 
 	if reqErr != nil {
@@ -62,7 +60,7 @@ func HttpRequest(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 		return
 	}
 
-	common.SendMessageText(bot, update.Message.Chat.ID, body)
+	common.SendMessageText(bot, update.Message.Chat.ID, fmt.Sprint(statusCode))
 }
 
 // send help message to user about:
