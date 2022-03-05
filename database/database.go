@@ -1,17 +1,22 @@
 package database
 
 import (
+	"io"
 	"log"
 	"os"
 	"path"
+	"runtime"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/9d4/ampastelobot/common"
+	_ "github.com/mattn/go-sqlite3"
 
 	"database/sql"
 )
 
-const DBNAME string = "session.db"
+const (
+	DBNAME          string = "session.db"
+	sqlResourcePath string = "/resources/sql/"
+)
 
 var DB *sql.DB
 
@@ -44,14 +49,7 @@ func Init() {
 
 func CreateSessionTable() bool {
 	// make session table
-	sql := `CREATE TABLE IF NOT EXISTS session (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-user_id INTEGER NOT NULL,
-session_id TEXT NOT NULL,
-data TEXT,
-created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);`
+	sql, _ := getSqlFromFile("create_session_table.sql")
 
 	stmt, err := DB.Prepare(sql)
 	if err != nil {
@@ -66,13 +64,7 @@ updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 }
 
 func CreateBlynkTokenTable() bool {
-	sql := `CREATE TABLE IF NOT EXISTS blynk_tokens (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-user_id INTEGER NOT NULL,
-token TEXT,
-created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);`
+	sql, _ := getSqlFromFile("create_blynk_table.sql")
 
 	stmt, err := DB.Prepare(sql)
 	if err != nil {
@@ -92,4 +84,24 @@ func dbFileExists(path string) bool {
 	}
 
 	return false
+}
+
+func getSqlFromFile(filename string) (string, error) {
+	_, f, _, _ := runtime.Caller(0)
+	currentDir := path.Dir(f)
+	rootDir := path.Join(currentDir, "../")
+
+	sqlPath := path.Join(rootDir, sqlResourcePath, filename)
+
+	sql, err := os.Open(sqlPath)
+	if err != nil {
+		return "", err
+	}
+
+	content, err := io.ReadAll(sql)
+	if err != nil {
+		return "", err
+	}
+
+	return string(content), nil
 }
