@@ -1,3 +1,2 @@
 .env
-session.db
-session.db*
+database.db

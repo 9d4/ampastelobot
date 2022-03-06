@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	DBNAME          string = "session.db"
+	DBNAME          string = "database.db"
 	sqlResourcePath string = "/resources/sql/"
 )
 
