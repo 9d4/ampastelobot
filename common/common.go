@@ -44,7 +44,7 @@ func (cmd *Command) GetArgValue(arg string) (ret string) {
 		return
 	}
 
-	ret = cmd.Args[i+1]	
+	ret = cmd.Args[i+1]
 
 	return
 }
@@ -122,4 +122,9 @@ func StripSpaces(text string) string {
 	}
 
 	return string(out)
+}
+
+func IsDevelopment() bool {
+	dev := os.Getenv("DEVELOPMENT")
+	return dev == "1"
 }
