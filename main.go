@@ -5,6 +5,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/9d4/ampastelobot/common"
 	"github.com/9d4/ampastelobot/database"
 	"github.com/9d4/ampastelobot/matchers"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -25,7 +26,9 @@ func main() {
 	}
 
 	// set debug mode
-	bot.Debug = true
+	if common.IsDevelopment() {
+		bot.Debug = true
+	}
 
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 30
