@@ -14,13 +14,17 @@ import (
 )
 
 const (
-	DBNAME          string = "database.db"
 	sqlResourcePath string = "/resources/sql/"
 )
 
+var DBNAME string = "database.db"
 var DB *sql.DB
 
 func Init() {
+	if common.IsDevelopment() {
+		DBNAME = "database-dev.db"
+	}
+
 	dsn := path.Join(common.Wd(), DBNAME)
 
 	if !dbFileExists(dsn) {
