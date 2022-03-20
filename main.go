@@ -5,9 +5,11 @@ import (
 	"os"
 	"sync"
 
+	"github.com/9d4/ampastelobot/action"
 	"github.com/9d4/ampastelobot/common"
 	"github.com/9d4/ampastelobot/database"
 	"github.com/9d4/ampastelobot/matchers"
+	"github.com/9d4/ampastelobot/session"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
 )
@@ -42,7 +44,17 @@ func main() {
 		for {
 			update := <-updates
 
-			go func() { matchers.Match(bot, update) }()
+			go func() {
+				actuator := action.NewActuator(bot, update)
+
+				actuator.Add(session.Middleware)
+
+				actuator.Add(matchers.CallbackQueryAction)
+				actuator.Add(matchers.CommandAction)
+				actuator.Add(matchers.TextAction)
+
+				actuator.Exec()
+			}()
 		}
 	}()
 
