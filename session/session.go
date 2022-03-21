@@ -84,7 +84,7 @@ func CreateSession(update tgbotapi.Update) (Session, error) {
 }
 
 // get user session from db
-func GetSession(update *tgbotapi.Update) (Session, error) {
+func GetSession(update tgbotapi.Update) (Session, error) {
 	var sess Session
 	userID := update.Message.From.ID
 
@@ -123,7 +123,7 @@ func Middleware(botUpdate *action.BotUpdate) bool {
 	_, update := botUpdate.Bot, *botUpdate.Update
 
 	// check wheter has session or not
-	if _, err := GetSession(&update); err != nil {
+	if _, err := GetSession(update); err != nil {
 		switch err {
 		case err.(*ErrNoSessionInDB):
 			// if error is ErrNoSessionInDB
