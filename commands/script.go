@@ -1,10 +1,14 @@
 package commands
 
 import (
+	"strings"
+
+	"github.com/9d4/ampastelobot/app/script"
 	"github.com/9d4/ampastelobot/common"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+// used to call the matcher.Match and avoiding import cycle
 type Matcher interface {
 	Match()
 }
@@ -31,6 +35,20 @@ func Script(bot *tgbotapi.BotAPI, update tgbotapi.Update, m Matcher) {
 	switch cmd.Subcommand {
 	case "", "help":
 		scriptSendHelp(bot, update)
+	case "save":
+		if len(cmd.Args) < 2 {
+			scriptSendHelp(bot, update)
+			return
+		}
+
+		textCommand := strings.Join(cmd.Args[1:], " ")
+		s := script.New(cmd.Args[0], textCommand)
+		err := s.SaveToDB(update)
+		if err != nil {
+			// send "Can't save reason: reason"
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+			bot.Send(msg)
+		}
 	}
 }
 

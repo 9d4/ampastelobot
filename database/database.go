@@ -36,6 +36,7 @@ func Init() {
 	defer func() {
 		CreateSessionTable()
 		CreateBlynkTokenTable()
+		CreateScriptsTable()
 	}()
 
 	db, err := sql.Open("sqlite3", dsn)
@@ -73,6 +74,21 @@ func CreateBlynkTokenTable() bool {
 	stmt, err := DB.Prepare(sql)
 	if err != nil {
 		log.Panicln("Can't create blynk_tokens table")
+	}
+
+	if _, err := stmt.Exec(); err == nil {
+		return true
+	}
+
+	return false
+}
+
+func CreateScriptsTable() bool {
+	sql, _ := getSqlFromFile("create_scripts_table.sql")
+
+	stmt, err := DB.Prepare(sql)
+	if err != nil {
+		log.Panicln("Can't create scripts table")
 	}
 
 	if _, err := stmt.Exec(); err == nil {
